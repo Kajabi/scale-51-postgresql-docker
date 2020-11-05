@@ -1,0 +1,3 @@
+# this deb contains references to the ubuntu20.04 focal repository
+# replace this line with the appropriate ubuntu version name
+deb https://apt-archive.postgresql.org/pub/repos/apt focal-pgdg-archive main
