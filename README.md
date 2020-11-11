@@ -1,87 +1,50 @@
+# CircleCI Dockerfile Wizard
 
-Found debian/ubuntu postgresql package archive
+Easily build Docker images with different versions/combinations of common languages/dependencies, for use on CircleCI.
 
-echo "deb https://apt-archive.postgresql.org/pub/repos/apt focal-pgdg-archive main" | sudo tee /etc/apt/sources.list.d/pg.list
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 7FCC7D46ACCC4CF8
-sudo apt-get update
+## Prerequisites
 
-apt-cache policy postgresql-12
-postgresql-12:
-  Installed: (none)
-  Candidate: 12.4-1.pgdg20.04+1
-  Version table:
-     12.4-1.pgdg20.04+1 500
-        500 https://apt-archive.postgresql.org/pub/repos/apt focal-pgdg-archive/main amd64 Packages
-     12.4-0ubuntu0.20.04.1 500
-        500 http://us-east-2.ec2.archive.ubuntu.com/ubuntu focal-updates/main amd64 Packages
-        500 http://security.ubuntu.com/ubuntu focal-security/main amd64 Packages
-     12.3-1.pgdg20.04+1 500
-        500 https://apt-archive.postgresql.org/pub/repos/apt focal-pgdg-archive/main amd64 Packages
-     12.2-4 500
-        500 http://us-east-2.ec2.archive.ubuntu.com/ubuntu focal/main amd64 Packages
-     12.2-3.pgdg20.04+1 500
-        500 https://apt-archive.postgresql.org/pub/repos/apt focal-pgdg-archive/main amd64 Packages
-     12.2-2.pgdg20.04+1+b1 500
-        500 https://apt-archive.postgresql.org/pub/repos/apt focal-pgdg-archive/main amd64 Packages
-     12.2-2.pgdg20.04+1 500
-        500 https://apt-archive.postgresql.org/pub/repos/apt focal-pgdg-archive/main amd64 Packages
-     12.2-1.pgdg20.04+1 500
-        500 https://apt-archive.postgresql.org/pub/repos/apt focal-pgdg-archive/main amd64 Packages
+- [CircleCI account](https://circleci.com/signup)
+- [Docker Hub account](https://hub.docker.com) (Docker itself **does not** need to be installed on your computer)
+- [Make](https://en.wikipedia.org/wiki/Make_(software)) & [Perl](https://perl.org) (included in most macOS & Linux installations)
 
+## Usage
 
-# WTF, figured out the install command, 
-sudo apt-get install postgresql-12=12.3-1.pgdg20.04+1
+**1. Fork this repository and start building it on CircleCI:**
 
-# remove crud used to install postgresql
-sudo apt autoremove
+![Setup Project](https://raw.githubusercontent.com/CircleCI-Public/dockerfile-wizard/master/img/setup%20project.jpg "Setup Project")
 
-# to start postgresql cluster
-pg_ctlcluster 12 main start
+**2. Add your Docker Hub username (`DOCKER_USERNAME`) and password (`DOCKER_PASSWORD`) to CircleCI, either as project-specific environment variables (shown below), or as resources in your **org-global** (default) [Context](https://circleci.com/docs/2.0/contexts)**
 
+![Environment Variables](https://raw.githubusercontent.com/CircleCI-Public/dockerfile-wizard/master/img/env%20vars.jpg "Environment Variables")
 
-All of the postgres client and server files are stored in /usr/lib/postgresql/12/bin
+**3.** Clone your fork of the project onto your computer
 
-ls -al /usr/lib/postgresql/12/bin
-total 11352
-drwxr-xr-x 2 root root    4096 Nov  5 01:43 .
-drwxr-xr-x 4 root root    4096 Oct  5 17:53 ..
--rwxr-xr-x 1 root root   68256 Aug 20 09:29 clusterdb
--rwxr-xr-x 1 root root   68320 Aug 20 09:29 createdb
--rwxr-xr-x 1 root root   76864 Aug 20 09:29 createuser
--rwxr-xr-x 1 root root   64064 Aug 20 09:29 dropdb
--rwxr-xr-x 1 root root   64032 Aug 20 09:29 dropuser
--rwxr-xr-x 1 root root  146776 May 13 07:49 initdb
--rwxr-xr-x 1 root root   43688 May 13 07:49 oid2name
--rwxr-xr-x 1 root root   47256 May 13 07:49 pg_archivecleanup
--rwxr-xr-x 1 root root  117976 Aug 20 09:29 pg_basebackup
--rwxr-xr-x 1 root root   68144 May 13 07:49 pg_checksums
--rwxr-xr-x 1 root root   47336 Aug 20 09:29 pg_config
--rwxr-xr-x 1 root root   63744 May 13 07:49 pg_controldata
--rwxr-xr-x 1 root root   72288 May 13 07:49 pg_ctl
--rwxr-xr-x 1 root root  413792 Aug 20 09:29 pg_dump
--rwxr-xr-x 1 root root  106152 Aug 20 09:29 pg_dumpall
--rwxr-xr-x 1 root root   68064 Aug 20 09:29 pg_isready
--rwxr-xr-x 1 root root   84824 Aug 20 09:29 pg_receivewal
--rwxr-xr-x 1 root root   89024 Aug 20 09:29 pg_recvlogical
--rwxr-xr-x 1 root root   68160 May 13 07:49 pg_resetwal
--rwxr-xr-x 1 root root  179808 Aug 20 09:29 pg_restore
--rwxr-xr-x 1 root root  105056 May 13 07:49 pg_rewind
--rwxr-xr-x 1 root root   43176 May 13 07:49 pg_standby
--rwxr-xr-x 1 root root   47376 May 13 07:49 pg_test_fsync
--rwxr-xr-x 1 root root   39144 May 13 07:49 pg_test_timing
--rwxr-xr-x 1 root root  146248 May 13 07:49 pg_upgrade
--rwxr-xr-x 1 root root  101024 May 13 07:49 pg_waldump
--rwxr-xr-x 1 root root  163280 May 13 07:49 pgbench
--rwxr-xr-x 1 root root 8076608 May 13 07:49 postgres
-lrwxrwxrwx 1 root root       8 May 13 07:49 postmaster -> postgres
--rwxr-xr-x 1 root root  695744 Aug 20 09:29 psql
--rwxr-xr-x 1 root root   72480 Aug 20 09:29 reindexdb
--rwxr-xr-x 1 root root   80864 Aug 20 09:29 vacuumdb
--rwxr-xr-x 1 root root   43528 May 13 07:49 vacuumlo
+**4.** Enter the cloned `dockerfile-wizard` directory and run `make ready` to prepare the `config.yml` file for building Docker images on CircleCI
 
-/usr/lib/postgresql/12/bin/postgres  --version
-postgres (PostgreSQL) 12.3 (Ubuntu 12.3-1.pgdg20.04+1)
+**5.** Run `make setup` in the cloned directory, or else manually add the versions/dependencies that you need to `.circleci/config.yml` as specified in the [`image_config` section](https://github.com/CircleCI-Public/dockerfile-wizard/blob/master/.circleci/config.yml)
 
-/usr/lib/postgresql/12/bin/pg_dump --version
-pg_dump (PostgreSQL) 12.4 (Ubuntu 12.4-0ubuntu0.20.04.1)
+**6.** Commit and push your changes
 
+Once the build has finished, your image will be available at `http://hub.docker.com/r/DOCKER_USERNAME/IMAGE_NAME` and can be used in other projects building on CircleCI (or anywhere else!). The Dockerfile for your image will be stored as an artifact in this project's `build` job.
+
+To use the Dockerfile Wizard again, run `make reset` in the cloned directory, then repeat steps **4-6**.
+
+### How it works
+
+1. The `setup` script adds your requested version information to the config.yml file as environment variables
+1. The `generate.sh` script runs on CircleCI and generates a Dockerfile based on those environment variables
+1. CircleCI builds your Docker image from the generated Dockerfile, deploys it using your Docker credentials, and then tests your image using [Bats](https://github.com/sstephenson/bats), which we install in every Docker image built via this repository
+
+### Notes
+
+- The portions of this repository that run on your local computer are intended for Linux/macOS operating systems; they may not work on Windows
+- This repository has not been tested with every possible permutation of versions/dependencies, and you may encounter errors with some combinations of various languages/tools. If your `build` job fails, check its `docker build` step—there's likely a compilation error with a particular version of Ruby, Node, or Python.
+- Thanks to [jmason](https://github.com/jmason/tap-to-junit-xml) for the `tap-to-junit` script!
+- [Feedback/questions/bugs welcome!](https://github.com/CircleCI-Public/dockerfile-wizard/issues)
+- Want to do all this yourself? Check out our video on [creating custom Docker images for CircleCI](https://youtube.com/watch?v=JYVLeguIbe0)
+
+### To-do
+
+- Add PHP support
+- Add support for other container registries
